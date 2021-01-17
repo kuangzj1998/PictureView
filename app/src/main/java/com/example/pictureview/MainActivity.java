@@ -12,6 +12,7 @@ import android.Manifest;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -44,12 +45,18 @@ public class MainActivity extends AppCompatActivity {
     private List<String> folderList = new ArrayList<>();
     private RecyclerView recyclerView;
 
+    private Setting setting;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         PermissionCheck();
+        //todo if(本地没有setting)
+        setting = new Setting();
+        setting.setCount(0);
+        //else 读取数据，set
     }
 
     @Override
@@ -65,6 +72,13 @@ public class MainActivity extends AppCompatActivity {
             case R.id.actionbar_sync:
                 Toast.makeText(this,"重新搜索本地图片",Toast.LENGTH_SHORT).show();
                 LoadLocalPicture();
+                break;
+            case R.id.actionbar_setting:
+                // 跳转到设置界面
+                Intent intent = new Intent(this,StatActivity.class);
+                    setting.setCount(setting.getCount()+1);
+                intent.putExtra("Setting",setting);
+                startActivityForResult(intent,2); //todo 全局类，enum标记
                 break;
             default:
                 break;
@@ -180,5 +194,17 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+        if(requestCode==2&&resultCode==1){
+            //直接将新的setting替换掉旧的引用，和传值修改原有的setting相比哪个更好？
+            setting = (Setting)data.getSerializableExtra("Setting");
+            if(setting!=null)
+                Toast.makeText(MainActivity.this,setting.toString(),Toast.LENGTH_SHORT).show();
+            else Toast.makeText(MainActivity.this,"Result Setting is Null",Toast.LENGTH_SHORT).show();
+        }
     }
 }

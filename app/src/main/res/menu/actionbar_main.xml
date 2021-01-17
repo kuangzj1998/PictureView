@@ -6,5 +6,9 @@
         android:icon="@android:drawable/ic_popup_sync"
         android:title="@string/sync"
         app:showAsAction="ifRoom" />
-
+    <item
+        android:id="@+id/actionbar_setting"
+        android:title="@string/setting"
+        app:showAsAction="never"
+        />
 </menu>
